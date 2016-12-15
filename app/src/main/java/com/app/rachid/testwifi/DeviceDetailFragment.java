@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.app.rachid.testwifi;
+package com.anthooop.projetandroidjeu;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -34,9 +34,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.rachid.testwifi.DeviceListFragment.DeviceActionListener;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,6 +51,7 @@ import java.net.Socket;
  * A fragment that manages a particular peer and allows interaction with device
  * i.e. setting up network connection and transferring data.
  */
+
 public class DeviceDetailFragment extends Fragment implements ConnectionInfoListener {
 
     protected static final int CHOOSE_FILE_RESULT_CODE = 20;
@@ -107,9 +110,10 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                     public void onClick(View v) {
                         // Allow user to pick an image from Gallery or other
                         // registered apps
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("image/*");
-                        startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
+//                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                        intent.setType("image/*");
+//                        startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
+                        new FileServerAsyncTask(getActivity(), mContentView.findViewById(R.id.status_text)).execute();
                     }
                 });
 
@@ -222,25 +226,32 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
         @Override
         protected String doInBackground(Void... params) {
+            DataInputStream inputstream = null;
             try {
                 ServerSocket serverSocket = new ServerSocket(8988);
                 Log.d(WiFiDirectActivity.TAG, "Server: Socket opened");
                 Socket client = serverSocket.accept();
                 Log.d(WiFiDirectActivity.TAG, "Server: connection done");
-                final File f = new File(Environment.getExternalStorageDirectory() + "/"
-                        + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
-                        + ".jpg");
 
-                File dirs = new File(f.getParent());
-                if (!dirs.exists())
-                    dirs.mkdirs();
-                f.createNewFile();
-
-                Log.d(WiFiDirectActivity.TAG, "server: copying files " + f.toString());
-                InputStream inputstream = client.getInputStream();
-                copyFile(inputstream, new FileOutputStream(f));
+                inputstream = new DataInputStream(client.getInputStream());
+                String str = inputstream.readUTF();
                 serverSocket.close();
-                return f.getAbsolutePath();
+                return str;
+
+//                final File f = new File(Environment.getExternalStorageDirectory() + "/"
+//                        + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
+//                        + ".jpg");
+//
+//                File dirs = new File(f.getParent());
+//                if (!dirs.exists())
+//                    dirs.mkdirs();
+//                f.createNewFile();
+//
+//                Log.d(WiFiDirectActivity.TAG, "server: copying files " + f.toString());
+//                InputStream inputstream = client.getInputStream();
+//                copyFile(inputstream, new FileOutputStream(f));
+//                serverSocket.close();
+//                return f.getAbsolutePath();
             } catch (IOException e) {
                 Log.e(WiFiDirectActivity.TAG, e.getMessage());
                 return null;
@@ -254,11 +265,12 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                statusText.setText("File copied - " + result);
-                Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse("file://" + result), "image/*");
-                context.startActivity(intent);
+//                statusText.setText("File copied - " + result);
+//                Intent intent = new Intent();
+//                intent.setAction(android.content.Intent.ACTION_VIEW);
+//                intent.setDataAndType(Uri.parse("file://" + result), "image/*");
+//                context.startActivity(intent);
+
             }
 
         }

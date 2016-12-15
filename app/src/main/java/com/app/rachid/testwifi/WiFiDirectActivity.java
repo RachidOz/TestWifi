@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.app.rachid.testwifi;
+package com.anthooop.projetandroidjeu;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

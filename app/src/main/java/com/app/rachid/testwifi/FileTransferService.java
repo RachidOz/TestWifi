@@ -1,6 +1,6 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 
-package com.app.rachid.testwifi;
+package com.anthooop.projetandroidjeu;
 
 import android.app.IntentService;
 import android.content.ContentResolver;
@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,10 +47,11 @@ public class FileTransferService extends IntentService {
 
         Context context = getApplicationContext();
         if (intent.getAction().equals(ACTION_SEND_FILE)) {
-            String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
+//            String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
+            DataOutputStream stream = null;
 
             try {
                 Log.d(WiFiDirectActivity.TAG, "Opening client socket - ");
@@ -56,11 +59,13 @@ public class FileTransferService extends IntentService {
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
 
                 Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
-                OutputStream stream = socket.getOutputStream();
+//                OutputStream stream = socket.getOutputStream();
+                stream = new DataOutputStream(socket.getOutputStream());
                 ContentResolver cr = context.getContentResolver();
                 InputStream is = null;
                 try {
-                    is = cr.openInputStream(Uri.parse(fileUri));
+//                    is = cr.openInputStream(Uri.parse(fileUri));
+                    stream.writeUTF("a string");
                 } catch (FileNotFoundException e) {
                     Log.d(WiFiDirectActivity.TAG, e.toString());
                 }
